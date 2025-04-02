@@ -35,6 +35,7 @@ const CarCostCalculator = () => {
   const [currencyRates, setCurrencyRates] = useState({ USD: 1, KRW: 1330, RUB: 92, KZT: 450 });
   const [calculated, setCalculated] = useState(false);
   const [details, setDetails] = useState({});
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const fetchCurrencyRates = async () => {
@@ -67,74 +68,100 @@ const CarCostCalculator = () => {
     setCalculated(true);
   };
 
+  const resetForm = () => {
+    setSelectedCar(carModels[0].name);
+    setCountry('kazakhstan');
+    setFuelType('petrol');
+    setCurrency('USD');
+    setCalculated(false);
+    setDetails({});
+  };
+
   const convertCurrency = (amountUSD) => (amountUSD * currencyRates[currency]).toFixed(2);
 
   return (
-    <div className="max-w-xl mx-auto p-8 bg-white rounded-xl shadow-2xl border border-gray-200">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Калькулятор стоимости авто</h2>
-
-      <label className="block mb-2 text-gray-700 font-medium">Модель автомобиля</label>
-      <select
-        className="w-full mb-4 p-3 border rounded-lg bg-gray-50"
-        value={selectedCar}
-        onChange={(e) => setSelectedCar(e.target.value)}
-      >
-        {carModels.map((car) => (
-          <option key={car.name} value={car.name}>
-            {car.name}
-          </option>
-        ))}
-      </select>
-
-      <label className="block mb-2 text-gray-700 font-medium">Страна назначения</label>
-      <select
-        className="w-full mb-4 p-3 border rounded-lg bg-gray-50"
-        value={country}
-        onChange={(e) => setCountry(e.target.value)}
-      >
-        <option value="kazakhstan">Казахстан</option>
-        <option value="russia">Россия</option>
-      </select>
-
-      <label className="block mb-2 text-gray-700 font-medium">Тип топлива</label>
-      <select
-        className="w-full mb-4 p-3 border rounded-lg bg-gray-50"
-        value={fuelType}
-        onChange={(e) => setFuelType(e.target.value)}
-      >
-        <option value="petrol">Бензин</option>
-        <option value="diesel">Дизель</option>
-        <option value="lpg">LPG</option>
-      </select>
-
-      <label className="block mb-2 text-gray-700 font-medium">Валюта расчета</label>
-      <select
-        className="w-full mb-4 p-3 border rounded-lg bg-gray-50"
-        value={currency}
-        onChange={(e) => setCurrency(e.target.value)}
-      >
-        <option value="USD">USD</option>
-        <option value="KRW">KRW</option>
-        <option value="RUB">RUB</option>
-        <option value="KZT">KZT</option>
-      </select>
-
-      <button
-        className="w-full py-3 mt-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-900 transition"
-        onClick={calculateDetails}
-      >
-        Рассчитать
-      </button>
-
-      {calculated && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="mb-2">Цена автомобиля: <span className="font-semibold">{convertCurrency(details.carPrice)} {currency}</span></p>
-          <p className="mb-2">Растаможка: <span className="font-semibold">{convertCurrency(details.customsTax)} {currency}</span></p>
-          <p className="mb-2">Комиссия дилера: <span className="font-semibold">{convertCurrency(details.dealerCommission)} {currency}</span></p>
-          <p className="mb-2">Доставка: <span className="font-semibold">{convertCurrency(details.deliveryCost)} {currency}</span></p>
-          <p className="text-xl font-bold text-gray-800">Общая стоимость: {convertCurrency(details.totalCost)} {currency}</p>
+    <div className={darkMode ? 'dark' : ''}>
+      <div className="w-full max-w-xl mx-auto p-6 sm:p-8 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center w-full">Калькулятор стоимости авто</h2>
+          <label className="ml-4 inline-flex items-center cursor-pointer">
+            <span className="mr-2 text-sm">🌙</span>
+            <input type="checkbox" className="sr-only peer" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+            <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:transition-all after:content-[''] after:absolute after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:top-0.5 after:left-0.5 relative" />
+          </label>
         </div>
-      )}
+
+        <label className="block mb-2 font-medium">Модель автомобиля</label>
+        <select
+          className="w-full mb-4 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
+          value={selectedCar}
+          onChange={(e) => setSelectedCar(e.target.value)}
+        >
+          {carModels.map((car) => (
+            <option key={car.name} value={car.name}>
+              {car.name}
+            </option>
+          ))}
+        </select>
+
+        <label className="block mb-2 font-medium">Страна назначения</label>
+        <select
+          className="w-full mb-4 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        >
+          <option value="kazakhstan">Казахстан</option>
+          <option value="russia">Россия</option>
+        </select>
+
+        <label className="block mb-2 font-medium">Тип топлива</label>
+        <select
+          className="w-full mb-4 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
+          value={fuelType}
+          onChange={(e) => setFuelType(e.target.value)}
+        >
+          <option value="petrol">Бензин</option>
+          <option value="diesel">Дизель</option>
+          <option value="lpg">LPG</option>
+        </select>
+
+        <label className="block mb-2 font-medium">Валюта расчета</label>
+        <select
+          className="w-full mb-4 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value)}
+        >
+          <option value="USD">USD</option>
+          <option value="KRW">KRW</option>
+          <option value="RUB">RUB</option>
+          <option value="KZT">KZT</option>
+        </select>
+
+        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          <button
+            className="w-full py-3 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-900 transition"
+            onClick={calculateDetails}
+          >
+            Рассчитать
+          </button>
+          <button
+            className="w-full py-3 bg-white text-gray-800 border border-gray-300 font-semibold rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-500 dark:hover:bg-gray-600 transition"
+            onClick={resetForm}
+          >
+            Сбросить
+          </button>
+        </div>
+
+        {calculated && (
+          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm sm:text-base animate-fade-in">
+            <p className="mb-2">Цена автомобиля: <span className="font-semibold">{convertCurrency(details.carPrice)} {currency}</span></p>
+            <p className="mb-2">Растаможка: <span className="font-semibold">{convertCurrency(details.customsTax)} {currency}</span></p>
+            <p className="mb-2">Комиссия дилера: <span className="font-semibold">{convertCurrency(details.dealerCommission)} {currency}</span></p>
+            <p className="mb-2">Доставка: <span className="font-semibold">{convertCurrency(details.deliveryCost)} {currency}</span></p>
+            <p className="text-lg sm:text-xl font-bold">Общая стоимость: {convertCurrency(details.totalCost)} {currency}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
